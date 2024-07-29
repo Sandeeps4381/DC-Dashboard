@@ -1,0 +1,115 @@
+/* Sidebar */
+#sidebar {
+  height: 100vh;
+  background-color: #000; /* Black background */
+  color: #fff; /* White text color */
+  border-right: 1px solid #333; /* Darker border */
+  position: fixed; /* Fixed position */
+  top: 0;
+  left: 0;
+  width: 16.6667%; /* 2/12 of the screen width */
+  transition: transform 0.3s ease; /* Smooth transition for sidebar toggle */
+}
+
+.sidebar-header {
+  border-bottom: 1px solid #333; /* Darker border */
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  color: #979797; /* Gray text color */
+}
+
+.nav-link.active {
+  background-color: #444; /* Darker background for active link */
+  color: #fff; /* White text color */
+}
+
+.nav-link img {
+  width: 24px; /* Adjust the size of the icons */
+}
+
+/* Main content */
+main {
+  margin-left: 16.6667%; /* Align main content to the right of the sidebar */
+  padding: 20px;
+  height: 100vh;
+  overflow-y: auto; /* Scrollable content */
+}
+
+/* Ensure the sidebar is hidden on mobile and shown on larger screens */
+@media (max-width: 768px) {
+  #sidebar {
+    transform: translateX(-100%);
+    position: fixed;
+    z-index: 1000;
+  }
+
+  .collapse.show {
+    transform: translateX(0);
+  }
+
+  main {
+    margin-left: 0; /* Full width on mobile */
+  }
+}
+
+.card {
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(255, 253, 253, 0.1);
+  padding: 20px;
+
+  width: 360px;
+}
+
+.report-header h2 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.report-header p {
+  margin: 5px 0;
+  color: #999;
+}
+
+.report-header h3 {
+ 
+  color: #666;
+}
+
+.test-cases-number {
+  font-size: 38px;
+  color: #4880ff;
+ 
+  text-align: end;
+}
+
+.report-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.report-footer {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 20px;
+}
+
+.result {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.result.passed p {
+  color: #2ecc71;
+}
+
+.result.failed p {
+  color: #e74c3c;
+}
