@@ -1,196 +1,551 @@
-<!-- <!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Dashboard</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link rel="stylesheet" href="styles.css">
-  </head>
-  <body>
-    <div class="container-fluid">
-      <div class="row">
-        <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-dark sidebar">
-          <div class="position-sticky">
-            <div class="sidebar-header text-center py-3">
-              <img src="/img/vTech lcompany_logo white 1 1.png" alt="Vtech Logo" class="img-fluid" style="max-width: 150px;">
-            </div>
-            <ul class="nav flex-column">
-              <li class="nav-item">
-                <a class="nav-link active" href="#">
-                  <img src="/img/home-svgrepo-com.svg" alt="Dashboard Icon" class="me-2" style="width: 20px;">
-                  Dashboard
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">
-                  <img src="/img/bag-svgrepo-com.svg" alt="Suites Icon" class="me-2" style="width: 20px;">
-                  Suites
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">
-                  <img src="/img/server-minimalistic-svgrepo-com.svg" alt="Metrics Icon" class="me-2" style="width: 20px;">
-                  Test Metrics
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">
-                  <img src="/img/camera-svgrepo-com.svg" alt="Screenshot Icon" class="me-2" style="width: 20px;">
-                  Screenshot
-                </a>
-              </li>
-            </ul>
-          </div>
-        </nav>
-        <main role="main" class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-          <div class="first">
-            <div class="automation">
-              <div class="card">
-                <div class="report-header">
-                  <h2>Automation Report</h2>
-                  <p>December 03, 2023</p>
-                  <h3>TEST CASES</h3>
-                  <h1 class="test-cases-number">293</h1>
-                </div>
-                <div class="report-body">
-                  <canvas id="doughnutChart"></canvas>
-                  <div class="report-footer">
-                    <div class="result passed">
-                      <p>Passed</p>
-                      <span>59</span>
-                    </div>
-                    <div class="result failed">
-                      <p>Failed</p>
-                      <span>234</span>
-                    </div>
-                  </div>
-                  <div class="time-taken">
-                    <i class="fa fa-clock-o"></i>
-                    <span>Time taken 00:53:46 Hrs</span>
-                  </div>
-                </div>
-              </div>
-              <div class="chart-container">
-                <canvas id="testChart"></canvas>
-              </div>
-            </div>
-          </div>
-        </main>
-      </div>
-    </div>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="script.js"></script>
-  </body>
-</html> -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsive Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> <!-- Font Awesome CDN -->
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .sidebar {
+            width: 250px;
+            background-color: #202224;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            padding-top: 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            overflow-y: auto;
+            transition: transform 0.3s ease;
+            z-index: 1000;
+            transform: translateX(-250px);
+        }
+        .sidebar.open {
+            transform: translateX(0);
+        }
+        .logo {
+            text-align: center;
+            padding: 15px;
+        }
+        .logo img {
+            max-width: 80%;
+        }
+        .links {
+            display: flex;
+            flex-direction: column;
+            margin-top: 20px;
+        }
+        .link {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            text-align: left;
+            color: #aaa;
+            text-decoration: none;
+            border-bottom: 1px solid #444;
+            transition: background-color 0.3s ease;
+        }
+        .link.active {
+            color: #ffff;
+            background-color: #979797;
+        }
+        .link i {
+            margin-right: 10px;
+        }
+        .content {
+            margin-left: 250px; /* Adjusts content area to account for sidebar */
+            padding: 20px;
+            flex: 1;
+            overflow-y: auto; /* Makes content scrollable if necessary */
+        }
+        .cards-container {
+            display: flex;
+            gap: 20px; /* Space between the cards */
+            flex-wrap: wrap; /* Allows cards to wrap */
+            align-items: stretch; /* Ensures equal height for both cards */
+        }
+        .card, .trend-card, .combined-card {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            box-sizing: border-box;
+            display: flex;
+            
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .card, .trend-card {
+            flex: 1; /* Allow cards to grow equally */
+        }
+        .card {
+            max-width: 300px;
+             /* Width for the automation card */
+          
+        }
+        .trend-card {
+            max-width: 700px; /* Greater width for the trend card */
+        }
+        .combined-card {
+            width: calc(300px + 700px + 20px); /* Combined width of automation and trend cards plus gap */
+            max-width: 100%; /* Ensure it doesn't overflow the container */
+            position: relative; /* To position the legend */
+        }
 
 
 
-
-
-
-
-
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Dashboard</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link rel="stylesheet" href="styles.css">
-  </head>
-  <body>
-    <div class="container-fluid">
-      <div class="row">
-        <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-dark sidebar">
-          <div class="position-sticky">
-            <div class="sidebar-header text-center py-3">
-              <img src="/img/vTech lcompany_logo white 1 1.png" alt="Vtech Logo" class="img-fluid" style="max-width: 150px;">
-            </div>
-            <ul class="nav flex-column">
-              <li class="nav-item">
-                <a class="nav-link active" href="#">
-                  <img src="/img/home-svgrepo-com.svg" alt="Dashboard Icon" class="me-2" style="width: 20px;">
-                  Dashboard
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">
-                  <img src="/img/bag-svgrepo-com.svg" alt="Suites Icon" class="me-2" style="width: 20px;">
-                  Suites
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">
-                  <img src="/img/server-minimalistic-svgrepo-com.svg" alt="Metrics Icon" class="me-2" style="width: 20px;">
-                  Test Metrics
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">
-                  <img src="/img/camera-svgrepo-com.svg" alt="Screenshot Icon" class="me-2" style="width: 20px;">
-                  Screenshot
-                </a>
-              </li>
-            </ul>
-          </div>
-        </nav>
-</div>
-
-
-
-
-
-        <!-- content  -->
-        <main role="main" class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-         
-            <div class="automation">
-              <div class="card">
-                <div class="report-header">
-                  <h2>Automation Report</h2>
-                  <p>December 03, 2023</p>
-                  <div class="report-header">
-                   
-                    <div class="test-cases-container">
-                      <h3>TEST CASES</h3>
-                      <h4 class="test-cases-number">293</h4>
-                    </div>
-                  </div>
-                  
-                </div>
-                <div class="report-body">
-                  <canvas id="doughnutChart"></canvas>
-                  <div class="report-footer">
-                    <div class="result passed">
-                      <p>Passed</p>
-                      <span>59</span>
-                    </div>
-                    <div class="result failed">
-                      <p>Failed</p>
-                      <span>234</span>
-                    </div>
-                  </div>
-                  <div class="time-taken">
-                    <i class="fa fa-clock-o"></i>
-                    <span>Time taken 00:53:46 Hrs</span>
-                  </div>
-                </div>
-              </div>
-              <div class="chart-container">
-                
-                <canvas id="testChart"></canvas>
-              </div>
-            </div>
         
-        </main>
-     
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script> -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="script.js"></script>
-  </body>
-</html>
+        .report-header h2 {
+          
+            padding: 0 15px;
+            font-size: 20px; /* Reduced font size */
+        }
+        .report-header p {
+          
+            padding: 0 15px;
+            color: #999;
+            font-size: 14px; /* Reduced font size */
+        }
+       
+        .test-cases-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 15px; /* Add some padding if needed */
+}
 
+.test-cases-container h3 {
+    color: #979797;
+    font-size: 16px; /* Adjust font size as needed */
+    margin: 0; /* Remove default margin */
+}
+
+.test-cases-number {
+    font-size: 28px; /* Adjust font size as needed */
+    color: #4880ff;
+    margin: 0; /* Remove default margin */
+}
+
+        .report-footer {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-top: 10px; /* Reduced margin */
+        }
+        .result {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 14px; /* Adjusted font size */
+        }
+        .result span {
+            font-size: 20px;
+            font-weight: bold;
+        color: #ffff;
+      
+        }
+        
+        .result.passed span{
+background-color: green;
+        }
+
+        .result.result.failed span{
+background-color:#FF6262;
+        }
+        .result.passed p {
+            padding: 0 15px;
+            color: #979797;
+        }
+        .result.failed p {
+            padding: 0 15px;
+            color: #979797;
+        }
+
+        .time-taken{
+            color: #979797;
+            text-align: center;
+        }
+
+        .circle-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .circle-container canvas {
+            border-radius: 40%;
+        }
+
+
+
+
+
+        .trend-card h2 {
+            margin: 0;
+            font-size: 20px;
+        }
+        .trend-card canvas {
+            width: 100%;
+            height: 200px; /* Adjust height for the trend chart */
+        }
+
+
+
+        
+        .combined-card-content {
+            display: flex;
+             /* Space between the inner cards */
+            flex-direction: column;
+            height: 100%;
+        }
+        .combined-card h2 {
+            padding: 0 15px;
+            font-size: 17px; /* Font size for the title */
+        }
+        .chart-container {
+            flex: 1;
+        }
+        .legend-container {
+            display: flex;
+            flex-direction: row;
+            margin-top: 10px;
+
+            margin-right: 17px;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+        
+    .legend-item {
+        display: flex;
+        align-items: center;
+        
+        
+    }
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+        }
+       
+
+        /* css mobile respon*/
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 250px;
+                height: 100%;
+                position: fixed;
+                top: 0;
+                left: 0;
+               margin-top: 10px;
+                z-index: 1000;
+                transition: transform 0.3s ease;
+            }
+            .content {
+                margin-left: 0;
+                margin-top: 60px; /* Adjusted to accommodate the topbar */
+            }
+            .topbar {
+                background-color: #333;
+                color: #fff;
+                padding: 10px;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                z-index: 1000;
+            }
+            .menu-toggle {
+                font-size: 24px;
+                cursor: pointer;
+                display: block;
+            }
+            .topbar .logo img {
+                max-width: 20%;
+            }
+            .sidebar .logo img {
+                display: none;
+            }
+        }
+        @media (min-width: 769px) {
+            .topbar {
+                display: none;
+            }
+            .sidebar {
+                transform: translateX(0);
+            }
+            .content {
+                margin-left: 250px; /* Adjusts content area to account for sidebar */
+                margin-top: px; /* No top margin needed on larger screens */
+            }
+        }
+        @media (max-width: 480px) {
+            .card, .trend-card, .combined-card {
+                padding: 10px;
+                width: 100%;
+                max-width: 100%;
+            }
+            .test-cases-number {
+                font-size: 24px; /* Reduced font size */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo">
+            <img src="/img/vTech lcompany_logo white 1 1.png" alt="Logo"> <!-- Replace with your logo -->
+        </div>
+        <div class="links">
+            <a href="#" class="link active"><i class="fas fa-home"></i> Dashboard</a> <!-- Changed to home icon -->
+            <a href="#" class="link"><i class="fas fa-shopping-bag"></i> Suites</a>
+
+            <a href="#" class="link"><i class="fas fa-list"></i> Test Martics</a>
+            <a href="#" class="link"><i class="fas fa-camera"></i> Screenshot</a> <!-- Changed to camera icon -->
+            <!-- Add more links with icons as needed -->
+        </div>
+    </div>
+    <div class="content">
+        <div class="topbar">
+            <span class="menu-toggle" onclick="toggleMenu()">&#9776;</span>
+            <div class="logo">
+                <img src="/img/vTech lcompany_logo white 1 1.png" alt="Logo"> <!-- Replace with your logo -->
+            </div>
+        </div>
+        <!-- Main content goes here -->
+        <div class="cards-container">
+            <div class="card">
+
+
+
+                <div class="report-header">
+                    <h2>Automation Report</h2>
+                    <p>December 03, 2023</p>
+                    <div class="test-cases-container">
+                        <h3>TEST CASES</h3>
+                        <h4 class="test-cases-number">293</h4>
+                    </div>
+                </div>
+                <div class="report-body">
+                    <div class="circle-container">
+                        <canvas id="progressCircle" width="160" height="160"></canvas>
+                       
+                    </div>
+                    <div class="report-footer">
+                        <div class="result passed">
+                            <p>Passed    <span>59</span></p>
+                           
+                        </div>
+                        <div class="result failed">
+                            <p>Failed    <span>234</span></p>
+                           
+                        </div>
+                    </div>
+                    <div class="time-taken">
+                        <i class="fa fa-clock-o"></i>
+                        <span>Time taken 00:53:46 Hrs</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="trend-card">
+                <h2>Trends</h2>
+                <canvas id="trendChart"></canvas>
+                <!-- Add additional content for the trends card as needed -->
+            </div>
+
+            <div class="combined-card">
+                <h2>Test Suites: 10</h2> <!-- Updated title -->
+                <div class="combined-card-content">
+                    <div class="chart-container">
+                        <canvas id="testChart"></canvas>
+                    </div>
+                    <!-- Custom legend container -->
+                    <div class="legend-container"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        function toggleMenu() {
+            const sidebar = document.querySelector('.sidebar');
+            sidebar.classList.toggle('open');
+        }
+
+        function drawProgressCircle(percentage, total) {
+    const canvas = document.getElementById('progressCircle');
+    const ctx = canvas.getContext('2d');
+    const radius = canvas.width / 2;
+    const lineWidth = 15;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Draw background circle
+    ctx.strokeStyle = '#f3f3f3';
+    ctx.lineWidth = lineWidth;
+    ctx.beginPath();
+    ctx.arc(radius, radius, radius - lineWidth / 2, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Draw progress arc
+    ctx.strokeStyle = '#00B69B'; // Green for pass
+    ctx.lineWidth = lineWidth;
+    ctx.beginPath();
+    ctx.arc(radius, radius, radius - lineWidth / 2, -Math.PI / 2, (Math.PI * 2) * (percentage / 100) - Math.PI / 2);
+    ctx.stroke();
+
+    // Draw remaining arc
+    ctx.strokeStyle = '#FF6262'; // Red for fail
+    ctx.beginPath();
+    ctx.arc(radius, radius, radius - lineWidth / 2, (Math.PI * 2) * (percentage / 100) - Math.PI / 2, Math.PI * 2 - Math.PI / 2);
+    ctx.stroke();
+
+    // Draw white circle for text background
+    ctx.fillStyle = '#fff';
+    ctx.beginPath();
+    ctx.arc(radius, radius, radius - lineWidth / 2 - 5, 0, Math.PI * 2); // Slightly smaller radius
+    ctx.fill();
+
+    // Draw percentage text
+    ctx.fillStyle = '#00B69B'; // Green for text
+    ctx.font = 'bold 24px Arial'; // Bold text
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(`${percentage}%`, radius, radius - 10); // Adjusted position for percentage
+
+    // Draw "Test Cases Passed" text
+    ctx.fillStyle = '#979797'; // Green for text
+    ctx.font = ' 14px Arial'; // Bold text
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('Test Cases Passed', radius, radius + 15); // Positioned below the percentage text
+}
+
+// Example usage
+drawProgressCircle(75, '75');
+
+
+
+        const ctx = document.getElementById('testChart').getContext('2d');
+    const data = {
+        labels: Array.from({ length: 10 }, (_, i) => `Test ${i + 1}`),
+        datasets: [
+            {
+                label: 'Pass',
+                data: [100, 200, 150, 300, 250, 350, 400, 150, 200, 300],
+                backgroundColor: '#00B69B', // Green for pass
+                barThickness: 15,
+                borderWidth: 1,
+                borderRadius: {
+                    topLeft: 7.5,
+                    topRight: 7.5,
+                    bottomLeft: 7.5,
+                    bottomRight: 7.5
+                },
+                barPercentage: 0.2, // Decrease bar percentage for more gap between bars
+                categoryPercentage: 0.8 // Add some gap between groups
+            },
+            {
+                label: 'Fail',
+                data: [50, 100, 75, 150, 125, 175, 200, 75, 100, 150],
+                backgroundColor: '#FF6262', // Red for fail
+                barThickness: 15,
+                borderWidth: 1,
+                borderRadius: {
+                    topLeft: 7.5,
+                    topRight: 7.5,
+                    bottomLeft: 7.5,
+                    bottomRight: 7.5
+                },
+                barPercentage: 0.2, // Decrease bar percentage for more gap between bars
+                categoryPercentage: 0.8 // Add some gap between groups
+            }
+        ]
+    };
+
+    const config = {
+        type: 'bar',
+        data: data,
+        options: {
+            layout: {
+                padding: {
+                    bottom: 20 // Add padding to create some gap from the bottom
+                }
+            },
+            plugins: {
+                title: {
+                    display: true,
+                     // Add the title text here
+                    font: {
+                        size: 16
+                    },
+                    padding: {
+                        bottom: 10
+                    },
+                    position: 'left' // Title on the left side
+                },
+                legend: {
+                    display: false // Hide default legend
+                }
+            },
+            scales: {
+                x: {
+                    stacked: false,
+                    title: {
+                        display: true,
+                    },
+                    grid: {
+                        display: false
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                    },
+                    beginAtZero: true,
+                    max: 500
+                }
+            }
+        }
+    };
+
+    const testChart = new Chart(ctx, config);
+
+    // Create the custom legend
+    const legendContainer = document.querySelector('.legend-container');
+    const legendItems = [
+        { color: '#00B69B', label: 'Pass' },
+        { color: '#FF6262', label: 'Fail' }
+    ];
+
+    legendItems.forEach(item => {
+        const legendItem = document.createElement('div');
+        legendItem.classList.add('legend-item');
+
+        const colorCircle = document.createElement('div');
+        colorCircle.classList.add('legend-color');
+        colorCircle.style.backgroundColor = item.color;
+
+        const label = document.createElement('span');
+        label.textContent = item.label;
+
+        legendItem.appendChild(colorCircle);
+        legendItem.appendChild(label);
+        legendContainer.appendChild(legendItem);
+    });
+    </script>
+</body>
+</html>
